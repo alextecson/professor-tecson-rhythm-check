@@ -1,0 +1,15 @@
+{
+  "name": "professor-tecson-rhythm-check",
+  "version": "1.0.0",
+  "description": "ECG rhythm-training quiz app (NURS 444). Tests cover the pure logic + data banks.",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "vitest": "^2.1.8"
+  }
+}
