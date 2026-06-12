@@ -1049,8 +1049,10 @@ function Engine({mode, reviewPick, onExit, onRestart}){
   // queue of case indices
   const [queue] = useState(()=>{
     if (isReview) return [reviewPick];
-    if (isCases) return shuffle(CASE_STUDIES.map((_,i)=>i), 29);
-    return shuffle(CASES.map((_,i)=>i), 13 + (mode.charCodeAt(0)||0));
+    if (isCases) return shuffle(CASE_STUDIES.map((_,i)=>i), (Math.random()*1e9)|0);
+    // Random seed so the order (and the opening rhythm) changes on every run —
+    // including "run it back", which remounts the Engine via its key.
+    return shuffle(CASES.map((_,i)=>i), (Math.random()*1e9)|0);
   });
   // which rounds are active this mode
   const activeRounds = cfg.rounds || [3];

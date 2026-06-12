@@ -15,10 +15,10 @@ const PROF_HEART = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAggAAAMxCAMAAA
 // ---------- SVG strip generator ----------
 // Coordinate system: 720 wide, 160 tall. Baseline y=90. Up = smaller y.
 
-const B = 90; // baseline
+export const B = 90; // baseline
 
 // One PQRST beat starting at x, with knobs. Returns path segment string (no leading M).
-function beat(x, { p = true, pAmp = 8, pInv = false, qrsW = 14, qrsAmp = 48, tAmp = 12, tInv = false, prGap = 16, wide = false, st = 0 } = {}) {
+export function beat(x, { p = true, pAmp = 8, pInv = false, qrsW = 14, qrsAmp = 48, tAmp = 12, tInv = false, prGap = 16, wide = false, st = 0 } = {}) {
   let s = "";
   let cx = x;
   // P wave
@@ -45,7 +45,7 @@ function beat(x, { p = true, pAmp = 8, pInv = false, qrsW = 14, qrsAmp = 48, tAm
   return { seg: s, end: cx + 14 };
 }
 
-function makeRegular(opts, gap, count, startBeats = {}) {
+export function makeRegular(opts, gap, count, startBeats = {}) {
   let d = `M0 ${B} `;
   let x = 30;
   for (let i = 0; i < count; i++) {
@@ -59,14 +59,14 @@ function makeRegular(opts, gap, count, startBeats = {}) {
 }
 
 // Flatline with subtle noise
-function flat() {
+export function flat() {
   let d = `M0 ${B} `;
   for (let x = 0; x <= 720; x += 24) d += `L${x} ${B + (Math.sin(x) * 0.6)} `;
   return d;
 }
 
 // Chaotic VFib-style scribble
-function chaos(amp) {
+export function chaos(amp) {
   let d = `M0 ${B} `;
   let x = 10;
   let seed = 7;
@@ -81,7 +81,7 @@ function chaos(amp) {
 }
 
 // Sawtooth flutter baseline with periodic QRS
-function flutter() {
+export function flutter() {
   let d = `M0 ${B} `;
   let x = 10;
   let toggle = 0;
@@ -100,7 +100,7 @@ function flutter() {
 }
 
 // AFib: irregular narrow QRS, wavy baseline, no P
-function afib() {
+export function afib() {
   let d = `M0 ${B} `;
   const gaps = [70, 110, 60, 95, 130, 75, 100];
   let x = 20;
@@ -117,7 +117,7 @@ function afib() {
 }
 
 // Torsades: spindle that grows and shrinks, twisting around baseline
-function torsades() {
+export function torsades() {
   let d = `M0 ${B} `;
   let x = 10;
   let i = 0;
@@ -133,7 +133,7 @@ function torsades() {
 }
 
 // VTach: regular wide sine-ish
-function vtach() {
+export function vtach() {
   let d = `M0 ${B} `;
   let x = 10;
   let i = 0;
@@ -148,7 +148,7 @@ function vtach() {
 }
 
 // Mobitz I: PR lengthens then a dropped QRS (P with no QRS)
-function mobitzI() {
+export function mobitzI() {
   let d = `M0 ${B} `;
   let x = 25;
   const prSeq = [10, 22, 36, null]; // null = dropped QRS
@@ -172,7 +172,7 @@ function mobitzI() {
 }
 
 // Mobitz II: constant PR, occasional dropped QRS
-function mobitzII() {
+export function mobitzII() {
   let d = `M0 ${B} `;
   let x = 25;
   const pattern = [1, 1, 0, 1, 1, 1, 0]; // 0 = dropped
@@ -194,7 +194,7 @@ function mobitzII() {
 }
 
 // 3rd degree: P waves marching independent of QRS
-function thirdDegree() {
+export function thirdDegree() {
   let d = `M0 ${B} `;
   // Independent P timeline and QRS timeline
   const pPositions = [];
@@ -222,7 +222,7 @@ function thirdDegree() {
 }
 
 // PVC: normal beats then a wide bizarre early beat
-function pvc() {
+export function pvc() {
   let d = `M0 ${B} `;
   let x = 25;
   const seq = ["n", "n", "pvc", "n", "n", "n", "pvc"];
@@ -246,7 +246,7 @@ function pvc() {
 }
 
 // PAC: normal beats then an early beat with abnormal P
-function pac() {
+export function pac() {
   let d = `M0 ${B} `;
   let x = 25;
   const seq = ["n", "n", "pac", "n", "n", "n"];
@@ -267,14 +267,14 @@ function pac() {
 }
 
 // PEA — show an organized-looking normal rhythm (the trap)
-function pea() {
+export function pea() {
   return makeRegular({ p: true, pAmp: 8, qrsAmp: 44, tAmp: 11 }, 30, 7);
 }
 
 // ---------- Build named strip paths ----------
 // STEMI: elevated ST segment that lifts off the baseline after the QRS,
 // merging into a broad T wave (tombstone-ish). Drawn for pattern recognition.
-function stemi() {
+export function stemi() {
   let d = `M0 ${B} `;
   let x = 25;
   const gap = 96;
@@ -295,7 +295,7 @@ function stemi() {
   return d;
 }
 
-const STRIPS = {
+export const STRIPS = {
   nsr: makeRegular({ p: true, pAmp: 8, qrsAmp: 46, tAmp: 11 }, 28, 7),
   sinusBrady: makeRegular({ p: true, pAmp: 8, qrsAmp: 46, tAmp: 11 }, 90, 4),
   sinusTach: makeRegular({ p: true, pAmp: 6, qrsAmp: 42, tAmp: 9 }, 6, 13),
@@ -320,7 +320,7 @@ const STRIPS = {
 
 // ---------- Question bank ----------
 // Each: strip key, the 4 rounds. Distractors hand-picked from the deck.
-const RHYTHM_OPTIONS = [
+export const RHYTHM_OPTIONS = [
   "Normal Sinus Rhythm", "Sinus Bradycardia", "Sinus Tachycardia",
   "Atrial Fibrillation", "Atrial Flutter", "PSVT",
   "PACs", "PVCs", "Ventricular Tachycardia", "Ventricular Fibrillation",
@@ -329,7 +329,7 @@ const RHYTHM_OPTIONS = [
   "3rd Degree AV Block", "Asystole", "PEA", "Junctional Rhythm",
 ];
 
-const CASES = [
+export const CASES = [
   {
     strip: "nsr",
     criteria: "Rate 60–100 and regular. An upright P wave before every QRS, every P followed by a QRS. PR 0.12–0.20s and constant, QRS narrow (<0.12s). Everything conducts in order — that's textbook normal.",
@@ -532,7 +532,7 @@ const CASES = [
   },
 ];
 
-const ROUNDS = [
+export const ROUNDS = [
   { key: "rhythm", label: "Identify the rhythm", prompt: "What rhythm is this?" },
   { key: "symptoms", label: "Symptoms / presentation", prompt: "What's the typical presentation?" },
   { key: "causes", label: "Typical causes", prompt: "What usually causes this?" },
@@ -540,7 +540,7 @@ const ROUNDS = [
 ];
 
 // shuffle helper (stable per case+round via seed)
-function shuffle(arr, seed) {
+export function shuffle(arr, seed) {
   const a = [...arr];
   let s = seed;
   for (let i = a.length - 1; i > 0; i--) {
@@ -555,7 +555,7 @@ function shuffle(arr, seed) {
 // ---------- CASE STUDIES (intervention-focused) ----------
 // Unhinged framing, surgical clinical. Every correct answer + why traces to
 // the NURS 444 TikTok Q&A deck logic. Dosing = 2020 AHA, verify before use.
-const CASE_STUDIES = [
+export const CASE_STUDIES = [
   {
     strip: "sinusBrady",
     criteria: "Identical to NSR in every way — upright P before every QRS, constant PR, narrow QRS — except the rate is under 60. Only the rate changed, so it's still sinus, just bradycardic.",
@@ -767,22 +767,22 @@ const CASE_STUDIES = [
 ];
 
 // ---------- voice pools ----------
-const HIT = [
+export const HIT = [
   "caught in 4K 📸","locked in fr","no notes","ate that up","diagnostic king behavior",
   "the SA node could never","you're so unserious (correct)","passed the vibe check ✅",
   "certified not flatlining","that's the brain rot working","sigma rhythm reader","unbothered. moisturized. correct.",
   "W in the chat","you understood the assignment","clinical judgment: activated",
 ];
-const MISS = [
+export const MISS = [
   "respectfully, no 💀","the monitor is lying and so were you","not the wrong rhythm bestie",
   "this ain't it chief","you fumbled the bag","asystole behavior","we don't claim that answer",
   "caught lacking","the strip said no","down bad on this one","that's a code brown of an answer",
   "the patient felt that one","NCLEX is watching and disappointed","not you picking that 😭",
 ];
-const STREAK = {3:"3 in a row, you're cooking 🔥",5:"5 streak — genuinely locked in rn",7:"7 deep, certified menace",10:"10 STRAIGHT. the crash cart fears you ⚡",15:"15?? touch grass (after this set) 🌱"};
-function rng(arr, seed){ return arr[Math.abs(seed) % arr.length]; }
+export const STREAK = {3:"3 in a row, you're cooking 🔥",5:"5 streak — genuinely locked in rn",7:"7 deep, certified menace",10:"10 STRAIGHT. the crash cart fears you ⚡",15:"15?? touch grass (after this set) 🌱"};
+export function rng(arr, seed){ return arr[Math.abs(seed) % arr.length]; }
 
-const MODES = [
+export const MODES = [
   { id:"full",    emoji:"🎲", title:"Full Run",        desc:"every strip, all 4 rounds, randomized. the main event.", rounds:[0,1,2,3] },
   { id:"id",      emoji:"🔍", title:"ID Only",          desc:"just name the rhythm. rapid fire. randomized.",         rounds:[0] },
   { id:"causes",  emoji:"🧬", title:"Causes Only",      desc:"what's behind it. randomized.",                        rounds:[2] },
@@ -970,7 +970,7 @@ function ReviewCard({idx, onBack, onExit}){
 // ---------- strip ----------
 // Sanitize a path string: drop any command group containing NaN/undefined/Infinity,
 // since a single bad number silently voids the ENTIRE <path>.
-function safePath(d) {
+export function safePath(d) {
   if (typeof d !== "string") return "M0 90 L720 90";
   // split into commands, keep only ones with all-finite numbers
   const tokens = d.match(/[MLQ][^MLQ]*/g);
@@ -1012,8 +1012,10 @@ function Engine({mode, reviewPick, onExit, onRestart}){
   // queue of case indices
   const [queue] = useState(()=>{
     if (isReview) return [reviewPick];
-    if (isCases) return shuffle(CASE_STUDIES.map((_,i)=>i), 29);
-    return shuffle(CASES.map((_,i)=>i), 13 + (mode.charCodeAt(0)||0));
+    if (isCases) return shuffle(CASE_STUDIES.map((_,i)=>i), (Math.random()*1e9)|0);
+    // Random seed so the order (and the opening rhythm) changes on every run —
+    // including "run it back", which remounts the Engine via its key.
+    return shuffle(CASES.map((_,i)=>i), (Math.random()*1e9)|0);
   });
   // which rounds are active this mode
   const activeRounds = cfg.rounds || [3];
