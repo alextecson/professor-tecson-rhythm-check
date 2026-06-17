@@ -57,31 +57,31 @@ const PROF_HEART = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAggAAAMxCAMAAA
 const B = 90; // baseline
 
 // One PQRST beat starting at x, with knobs. Returns path segment string (no leading M).
-function beat(x, { p = true, pAmp = 8, pInv = false, qrsW = 14, qrsAmp = 48, tAmp = 12, tInv = false, prGap = 16, wide = false, st = 0 } = {}) {
+function beat(x, { p = true, pAmp = 8, pInv = false, qrsW = 14, qrsAmp = 48, tAmp = 12, tInv = false, prGap = 16, wide = false, st = 0, sx = 1 } = {}) {
   let s = "";
   let cx = x;
   // P wave
   if (p) {
     const dir = pInv ? 1 : -1;
-    s += `L${cx + 6} ${B} Q${cx + 12} ${B + dir * pAmp} ${cx + 18} ${B} `;
-    cx += 18 + prGap;
+    s += `L${cx + 6 * sx} ${B} Q${cx + 12 * sx} ${B + dir * pAmp} ${cx + 18 * sx} ${B} `;
+    cx += (18 + prGap) * sx;
   } else {
-    cx += prGap;
+    cx += prGap * sx;
   }
   // QRS
   if (wide) {
-    s += `L${cx} ${B} L${cx + 6} ${B + 10} L${cx + 14} ${B - qrsAmp} L${cx + 26} ${B + 18} L${cx + 34} ${B + st} `;
-    cx += 40;
+    s += `L${cx} ${B} L${cx + 6 * sx} ${B + 10} L${cx + 14 * sx} ${B - qrsAmp} L${cx + 26 * sx} ${B + 18} L${cx + 34 * sx} ${B + st} `;
+    cx += 40 * sx;
   } else {
-    s += `L${cx} ${B} L${cx + 3} ${B + 12} L${cx + qrsW / 2} ${B - qrsAmp} L${cx + qrsW - 2} ${B + 16} L${cx + qrsW + 2} ${B + st} `;
-    cx += qrsW + 6;
+    s += `L${cx} ${B} L${cx + 3 * sx} ${B + 12} L${cx + (qrsW / 2) * sx} ${B - qrsAmp} L${cx + (qrsW - 2) * sx} ${B + 16} L${cx + (qrsW + 2) * sx} ${B + st} `;
+    cx += (qrsW + 6) * sx;
   }
   // ST segment + T wave
   const tdir = tInv ? 1 : -1;
-  s += `L${cx + 8} ${B + st} Q${cx + 20} ${B + st + tdir * tAmp} ${cx + 32} ${B + st} `;
-  cx += 40;
-  s += `L${cx + 14} ${B} `;
-  return { seg: s, end: cx + 14 };
+  s += `L${cx + 8 * sx} ${B + st} Q${cx + 20 * sx} ${B + st + tdir * tAmp} ${cx + 32 * sx} ${B + st} `;
+  cx += 40 * sx;
+  s += `L${cx + 14 * sx} ${B} `;
+  return { seg: s, end: cx + 14 * sx };
 }
 
 function makeRegular(opts, gap, count, startBeats = {}) {
@@ -129,7 +129,8 @@ function flutter() {
     d += `L${x + 8} ${B - 14} L${x + 16} ${B + 4} `;
     x += 16;
     toggle++;
-    if (toggle % 3 === 0) {
+    // 2:1 conduction → ventricular rate ~150 (the classic flutter finding)
+    if (toggle % 2 === 0) {
       d += `L${x} ${B} L${x + 3} ${B + 10} L${x + 8} ${B - 40} L${x + 13} ${B + 12} L${x + 16} ${B} `;
       x += 16;
     }
@@ -335,12 +336,15 @@ function stemi() {
 }
 
 const STRIPS = {
-  nsr: makeRegular({ p: true, pAmp: 8, qrsAmp: 46, tAmp: 11 }, 28, 7),
+  // ~80 bpm: 8 complexes across the 6-second (720u) strip
+  nsr: makeRegular({ p: true, pAmp: 8, qrsAmp: 46, tAmp: 11, sx: 0.75 }, 10, 9),
   sinusBrady: makeRegular({ p: true, pAmp: 8, qrsAmp: 46, tAmp: 11 }, 90, 4),
-  sinusTach: makeRegular({ p: true, pAmp: 6, qrsAmp: 42, tAmp: 9 }, 6, 13),
+  // ~130 bpm: 13 narrow complexes; sx compresses each beat so they fit
+  sinusTach: makeRegular({ p: true, pAmp: 6, qrsAmp: 42, tAmp: 9, sx: 0.5 }, 2, 15),
   afib: afib(),
   flutter: flutter(),
-  psvt: makeRegular({ p: false, qrsAmp: 40, tAmp: 8, prGap: 2 }, 4, 16),
+  // ~170 bpm: ~17 narrow, P-less complexes
+  psvt: makeRegular({ p: false, qrsAmp: 40, tAmp: 8, prGap: 2, sx: 0.5 }, 4, 18),
   pac: pac(),
   pvc: pvc(),
   vtach: vtach(),
