@@ -1,8 +1,27 @@
 # Rhythm Check
 
-Open `index.html` in a browser to run the fixed app.
+ECG rhythm-training quiz app (NURS 444), built with Vite + React. The whole app —
+component, question banks, mascot art, and EKG waveforms — lives in `RhythmCheck.tsx`
+with all images embedded as base64, so there are no external asset dependencies.
 
-This standalone HTML uses React/Babel from unpkg, so it needs internet access the first time it loads. The fixed React source is included as `RhythmCheck.tsx`.
+## Develop
+
+```sh
+npm install
+npm run dev      # local dev server with HMR
+npm run build    # production build -> dist/
+npm run preview  # serve the production build locally
+```
+
+`src/main.jsx` mounts the `RhythmCheck` component into `#root` in `index.html`.
+
+## Deploy
+
+Pushing to `main` triggers `.github/workflows/deploy.yml`, which builds the app and
+publishes `dist/` to GitHub Pages at
+<https://alextecson.github.io/professor-tecson-rhythm-check/>. The Vite `base` is set
+to `/professor-tecson-rhythm-check/` so assets resolve under that subpath. (Repo
+Settings → Pages → Source must be set to **GitHub Actions**.)
 
 ## Tests
 
