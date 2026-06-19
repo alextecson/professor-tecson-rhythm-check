@@ -17,11 +17,22 @@ npm run preview  # serve the production build locally
 
 ## Deploy
 
-Pushing to `main` triggers `.github/workflows/deploy.yml`, which builds the app and
-publishes `dist/` to GitHub Pages at
-<https://alextecson.github.io/professor-tecson-rhythm-check/>. The Vite `base` is set
-to `/professor-tecson-rhythm-check/` so assets resolve under that subpath. (Repo
-Settings → Pages → Source must be set to **GitHub Actions**.)
+Live at <https://alextecson.github.io/professor-tecson-rhythm-check/>.
+
+The Vite entry lives in `src/` and the app builds two interchangeable ways so it
+works regardless of how GitHub Pages is configured:
+
+- **Branch source ("Deploy from a branch", main/root):** `npm run build` inlines
+  the whole bundle into a single self-contained `index.html` at the repo root
+  (via `vite-plugin-singlefile`) and that file is committed — so the branch-served
+  root just works, no asset paths or build step required. Re-run `npm run build`
+  and commit the regenerated `index.html` after changing the app.
+- **GitHub Actions source:** `.github/workflows/deploy.yml` builds on push to
+  `main` and publishes `dist/` (also self-contained). To use this cleaner mode,
+  set Settings → Pages → Source to **GitHub Actions**; future edits then deploy on
+  merge with nothing to commit by hand.
+
+`base` is `/professor-tecson-rhythm-check/` so assets resolve under the subpath.
 
 ## Tests
 
